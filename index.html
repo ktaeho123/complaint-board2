@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>학과 소통 & 불만 게시판</title>
+    <!-- Google Fonts Pretendard -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* file:// 로 열렸을 때 표시되는 안내 스타일 */
+      #fileProtocolGuide {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 30%, #1e3a8a 0%, #0f172a 100%);
+        color: white;
+        font-family: 'Pretendard', sans-serif;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        padding: 1.5rem;
+      }
+      .guide-card {
+        background: white;
+        color: #0f172a;
+        padding: 2.25rem 2rem;
+        border-radius: 16px;
+        max-width: 480px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      }
+      .guide-card h2 {
+        font-size: 1.35rem;
+        color: #1e3a8a;
+        margin-bottom: 0.65rem;
+      }
+      .guide-card p {
+        font-size: 0.9rem;
+        color: #475569;
+        line-height: 1.6;
+        margin-bottom: 1.25rem;
+      }
+      .guide-card .btn-go {
+        display: inline-block;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: background 0.15s;
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+      }
+      .guide-card .btn-go:hover {
+        background: #1d4ed8;
+      }
+      .guide-subtext {
+        margin-top: 1rem;
+        font-size: 0.775rem;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- file:// 프로토콜 직접 실행 감지 안내 UI -->
+    <div id="fileProtocolGuide">
+      <div className="guide-card" class="guide-card">
+        <h2>📢 학과 소통 & 불만 게시판</h2>
+        <p>
+          React + Vite 웹 애플리케이션은 브라우저 보안 규정상 <code>file:///</code> 직접 열기가 아닌 <strong>로컬 웹 서버(localhost:3000)</strong>를 통해 실행되어야 합니다.
+          <br /><br />
+          아래 버튼을 누르면 <strong>게시판(http://localhost:3000)</strong>으로 즉시 이동합니다!
+        </p>
+        <a href="http://localhost:3000" class="btn-go" id="autoRedirectBtn">
+          👉 지금 바로 게시판 열기 (localhost:3000)
+        </a>
+        <div class="guide-subtext">
+          서버가 켜져 있다면 위 버튼을 클릭하거나 주소창에 <strong>http://localhost:3000</strong>을 입력하세요.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // file:/// 로 접속한 경우 자동 리다이렉트 및 가이드 화면 표시
+      if (window.location.protocol === 'file:') {
+        document.getElementById('fileProtocolGuide').style.display = 'flex';
+        // 자동으로 localhost:3000 으로 이동 시도
+        setTimeout(function() {
+          window.location.href = 'http://localhost:3000';
+        }, 1500);
+      }
+    </script>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

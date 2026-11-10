@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학과 소통 & 불만 접수 게시판</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-content">
+        <div class="logo-area">
+          <div class="logo-icon">
+            <i class="fa-solid fa-bullhorn"></i>
+          </div>
+          <div class="logo-text">
+            <h1>학과 소통 & 불만 게시판</h1>
+            <p>공지와 의견을 함께 나누고 학과를 개선하는 열린 공간</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="openWriteModalBtn" class="btn btn-primary">
+            <i class="fa-solid fa-pen-to-square"></i> 새 게시글 작성
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Notice / Roadmap Banner -->
+    <div class="roadmap-banner">
+      <div class="banner-badge">
+        <i class="fa-solid fa-circle-info"></i> 기능 로드맵 안내
+      </div>
+      <div class="banner-text">
+        현재 <strong>게시글 작성 및 조회(필수 기능)</strong>가 활성화되어 있습니다.
+        <span class="upcoming-tags">
+          <span class="tag">회원가입/로그인 (준비중)</span>
+          <span class="tag">댓글 (준비중)</span>
+          <span class="tag">파일 첨부 (준비중)</span>
+          <span class="tag">알림 (준비중)</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="board-container">
+      <!-- Controls Toolbar -->
+      <section class="toolbar-section">
+        <!-- Category Filter Tabs -->
+        <div class="category-tabs" id="categoryTabs">
+          <button class="tab-btn active" data-category="전체">전체보기</button>
+          <button class="tab-btn" data-category="공지사항"><i class="fa-solid fa-bullhorn"></i> 공지사항</button>
+          <button class="tab-btn" data-category="불만/건의"><i class="fa-solid fa-comment-dots"></i> 불만/건의</button>
+          <button class="tab-btn" data-category="학사/수업"><i class="fa-solid fa-graduation-cap"></i> 학사/수업</button>
+          <button class="tab-btn" data-category="시설/환경"><i class="fa-solid fa-building"></i> 시설/환경</button>
+          <button class="tab-btn" data-category="자유의견"><i class="fa-solid fa-lightbulb"></i> 자유의견</button>
+        </div>
+
+        <!-- Filter & Search Bar -->
+        <div class="filter-bar">
+          <div class="filter-left">
+            <div class="select-group">
+              <label for="statusFilter"><i class="fa-solid fa-filter"></i> 상태:</label>
+              <select id="statusFilter" class="form-select">
+                <option value="전체">모든 상태</option>
+                <option value="접수대기">접수대기</option>
+                <option value="처리중">처리중</option>
+                <option value="답변완료">답변완료</option>
+                <option value="공지">공지</option>
+              </select>
+            </div>
+
+            <div class="select-group">
+              <label for="sortFilter"><i class="fa-solid fa-arrow-down-short-wide"></i> 정렬:</label>
+              <select id="sortFilter" class="form-select">
+                <option value="latest">최신순</option>
+                <option value="views">조회순</option>
+                <option value="likes">추천순</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="filter-right">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input type="text" id="searchInput" placeholder="제목, 내용, 작성자 검색...">
+              <button id="searchClearBtn" class="search-clear-btn" style="display: none;">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Post Stats Bar -->
+      <div class="stats-bar">
+        <span>총 <strong id="totalCount">0</strong>개의 게시글이 있습니다.</span>
+      </div>
+
+      <!-- Posts List Container -->
+      <section class="posts-section">
+        <div id="postsList" class="posts-list">
+          <!-- Dynamically populated by app.js -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+          <div class="empty-icon"><i class="fa-regular fa-folder-open"></i></div>
+          <h3>등록된 게시글이 없습니다</h3>
+          <p>첫 번째 게시글이나 학과 구성원을 위한 의견을 작성해보세요!</p>
+          <button class="btn btn-primary" onclick="openWriteModal()">
+            <i class="fa-solid fa-pen-to-square"></i> 게시글 작성하기
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <p>© 2026 학과 구성원 의견 수렴 및 불만 게시판 • 열린 소통으로 더 나은 학과를 만듭니다.</p>
+    </footer>
+  </div>
+
+  <!-- ==================== Write Modal ==================== -->
+  <div id="writeModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <i class="fa-solid fa-pen-to-square"></i>
+          <h2 id="writeModalTitle">새 게시글 작성</h2>
+        </div>
+        <button type="button" class="close-modal-btn" onclick="closeWriteModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="writeForm" class="modal-body">
+        <input type="hidden" id="editPostId" value="">
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="postCategory">분류 <span class="required">*</span></label>
+            <select id="postCategory" class="form-input" required>
+              <option value="불만/건의">불만/건의</option>
+              <option value="시설/환경">시설/환경</option>
+              <option value="학사/수업">학사/수업</option>
+              <option value="공지사항">공지사항</option>
+              <option value="자유의견">자유의견</option>
+            </select>
+          </div>
+
+          <div class="form-group flex-1" id="statusGroup" style="display: none;">
+            <label for="postStatus">처리 상태</label>
+            <select id="postStatus" class="form-input">
+              <option value="접수대기">접수대기</option>
+              <option value="처리중">처리중</option>
+              <option value="답변완료">답변완료</option>
+              <option value="공지">공지</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="postTitle">제목 <span class="required">*</span></label>
+          <input type="text" id="postTitle" class="form-input" placeholder="게시글 제목을 간결하고 명확하게 입력해주세요" required maxlength="120">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <div class="label-with-checkbox">
+              <label for="postAuthor">작성자 <span class="required">*</span></label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="postAnonymous">
+                <span>익명으로 작성</span>
+              </label>
+            </div>
+            <input type="text" id="postAuthor" class="form-input" placeholder="이름 또는 닉네임" maxlength="20">
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="postPassword">비밀번호 (수정/삭제용) <span class="required">*</span></label>
+            <input type="password" id="postPassword" class="form-input" placeholder="4자리 이상 입력" required maxlength="20">
+            <small class="help-text">추후 글 수정이나 삭제 시 필요합니다.</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="postContent">내용 <span class="required">*</span></label>
+          <textarea id="postContent" class="form-textarea" rows="8" placeholder="불만 사항이나 건의할 내용, 또는 의견을 자세히 적어주세요.&#10;서로를 존중하는 건전한 게시판 문화를 만들어 갑시다." required></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeWriteModal()">취소</button>
+          <button type="submit" id="savePostBtn" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i> 작성 완료
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== Detail Modal ==================== -->
+  <div id="detailModal" class="modal-overlay">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <div class="detail-header-tags">
+          <span id="detailCategory" class="category-badge"></span>
+          <span id="detailStatus" class="status-badge"></span>
+        </div>
+        <button type="button" class="close-modal-btn" onclick="closeDetailModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body detail-body">
+        <h2 id="detailTitle" class="detail-title"></h2>
+        
+        <div class="detail-meta">
+          <div class="meta-item author-meta">
+            <i class="fa-regular fa-user"></i>
+            <span id="detailAuthor" class="author-name"></span>
+          </div>
+          <div class="meta-divider">•</div>
+          <div class="meta-item">
+            <i class="fa-regular fa-clock"></i>
+            <span id="detailCreatedAt"></span>
+          </div>
+          <div class="meta-divider">•</div>
+          <div class="meta-item">
+            <i class="fa-regular fa-eye"></i>
+            조회수 <span id="detailViews">0</span>
+          </div>
+        </div>
+
+        <hr class="detail-divider">
+
+        <div id="detailContent" class="detail-content"></div>
+
+        <div class="like-section">
+          <button id="likeBtn" class="btn btn-like">
+            <i class="fa-regular fa-thumbs-up"></i> 공감해요 <span id="detailLikes">0</span>
+          </button>
+        </div>
+
+        <!-- Comments Placeholder (Roadmap Preview) -->
+        <div class="comments-preview-box">
+          <div class="preview-header">
+            <h4><i class="fa-regular fa-comments"></i> 댓글 영역</h4>
+            <span class="preview-badge">추후 기능 추가 예정</span>
+          </div>
+          <p>댓글 작성 및 피드백 소통 기능은 추후 업데이트될 예정입니다.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer detail-footer">
+        <div class="footer-left">
+          <button type="button" class="btn btn-outline" onclick="closeDetailModal()">목록으로</button>
+        </div>
+        <div class="footer-right">
+          <button type="button" id="editPostBtn" class="btn btn-warning">
+            <i class="fa-solid fa-pen"></i> 수정
+          </button>
+          <button type="button" id="deletePostBtn" class="btn btn-danger">
+            <i class="fa-solid fa-trash"></i> 삭제
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Prompt Modal for Edit/Delete -->
+  <div id="passwordModal" class="modal-overlay">
+    <div class="modal-card modal-card-sm">
+      <div class="modal-header">
+        <h3 id="passwordModalTitle">비밀번호 확인</h3>
+        <button type="button" class="close-modal-btn" onclick="closePasswordModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form id="passwordForm" class="modal-body">
+        <p id="passwordModalDesc">게시글 작성 시 등록한 비밀번호를 입력해주세요.</p>
+        <div class="form-group">
+          <input type="password" id="verifyPasswordInput" class="form-input" placeholder="비밀번호 입력" required autofocus>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">취소</button>
+          <button type="submit" class="btn btn-primary" id="confirmPasswordBtn">확인</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
+
